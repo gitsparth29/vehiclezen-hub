@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, useSearch, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useSearch, Link, redirect } from "@tanstack/react-router";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,8 +20,7 @@ export const Route = createFileRoute("/auth")({
   beforeLoad: async () => {
     const { data } = await supabase.auth.getUser();
     if (data.user) {
-      // already signed in
-      throw new (await import("@tanstack/react-router")).redirect({ to: "/dashboard" } as any);
+      throw redirect({ to: "/dashboard" });
     }
   },
   component: AuthPage,
