@@ -206,13 +206,13 @@ function Nav() {
           <a href="#faq" className="text-sm text-muted-foreground hover:text-foreground">FAQ</a>
         </nav>
         <div className="flex items-center gap-3">
-          <a href="#" className="hidden text-sm font-medium text-foreground hover:text-primary sm:inline">Sign in</a>
-          <a
-            href="#pricing"
+          <Link to="/auth" className="hidden text-sm font-medium text-foreground hover:text-primary sm:inline">Sign in</Link>
+          <Link
+            to="/auth"
             className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-soft transition hover:opacity-90"
           >
             Start free trial <ArrowRight className="h-4 w-4" />
-          </a>
+          </Link>
         </div>
       </div>
     </header>
