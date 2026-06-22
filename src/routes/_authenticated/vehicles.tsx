@@ -283,7 +283,8 @@ function VehicleDialog({
 }) {
   const qc = useQueryClient();
   const form = useForm<VehicleForm>({
-    resolver: zodResolver(vehicleSchema),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(vehicleSchema) as any,
     values: editing
       ? {
           registration_number: editing.registration_number,
