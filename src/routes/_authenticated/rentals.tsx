@@ -326,7 +326,7 @@ function RentalDialog({
               <Input type="date" {...form.register("end_date")} />
             </Field>
             <Field label="Daily price *"><Input type="number" step="0.01" {...form.register("daily_price")} /></Field>
-            <Field label="Total ({days} day{days === 1 ? '' : 's'})">
+            <Field label={`Total (${days} day${days === 1 ? "" : "s"})`}>
               <Input value={formatCurrency(total)} readOnly className="bg-muted/50 font-medium" />
             </Field>
           </div>
