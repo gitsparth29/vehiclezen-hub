@@ -33,7 +33,7 @@ export const Route = createFileRoute("/_authenticated/trip-logs")({
 
 type Trip = Tables<"trip_logs">;
 type Vehicle = Pick<Tables<"vehicles">, "id" | "registration_number" | "make" | "model">;
-type Driver = Pick<Tables<"drivers">, "id" | "full_name">;
+type Driver = Pick<Tables<"drivers">, "id" | "first_name" | "last_name">;
 
 const schema = z.object({
   vehicle_id: z.string().uuid("Select a vehicle"),
@@ -88,7 +88,7 @@ function TripLogsPage() {
   const { data: drivers } = useQuery({
     queryKey: ["drivers", "min"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("drivers").select("id, full_name").order("full_name");
+      const { data, error } = await supabase.from("drivers").select("id, first_name, last_name").order("first_name");
       if (error) throw error;
       return data as Driver[];
     },
@@ -198,7 +198,7 @@ function TripLogsPage() {
                   <TableRow key={t.id}>
                     <TableCell className="text-xs">{new Date(t.start_time).toLocaleDateString()}</TableCell>
                     <TableCell className="font-medium">{v?.registration_number ?? "—"}</TableCell>
-                    <TableCell>{d?.full_name ?? "—"}</TableCell>
+                    <TableCell>{d ? `${d.first_name} ${d.last_name}` : "—"}</TableCell>
                     <TableCell>
                       <div className="text-sm">{t.start_location}</div>
                       <div className="text-xs text-muted-foreground">→ {t.end_location}</div>
@@ -330,7 +330,7 @@ function TripDialog({
                 <SelectTrigger><SelectValue placeholder="Unassigned" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">— Unassigned —</SelectItem>
-                  {drivers.map((d) => <SelectItem key={d.id} value={d.id}>{d.full_name}</SelectItem>)}
+                  {drivers.map((d) => <SelectItem key={d.id} value={d.id}>{d.first_name} {d.last_name}</SelectItem>)}
                 </SelectContent>
               </Select>
             </Field>
