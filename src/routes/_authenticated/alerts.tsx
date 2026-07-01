@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bell, Check, Trash2, Search, AlertTriangle, Info, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
@@ -42,6 +42,26 @@ function AlertsPage() {
       return data as Alert[];
     },
   });
+
+  useEffect(() => {
+    const channel = supabase
+      .channel("alerts-inbox")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "alerts" },
+        (payload) => {
+          qc.invalidateQueries({ queryKey: ["alerts"] });
+          if (payload.eventType === "INSERT") {
+            const row = payload.new as Alert;
+            toast(row.title, { description: row.description ?? undefined });
+          }
+        },
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [qc]);
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
