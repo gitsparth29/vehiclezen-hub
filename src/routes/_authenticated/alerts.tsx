@@ -43,6 +43,26 @@ function AlertsPage() {
     },
   });
 
+  useEffect(() => {
+    const channel = supabase
+      .channel("alerts-inbox")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "alerts" },
+        (payload) => {
+          qc.invalidateQueries({ queryKey: ["alerts"] });
+          if (payload.eventType === "INSERT") {
+            const row = payload.new as Alert;
+            toast(row.title, { description: row.description ?? undefined });
+          }
+        },
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [qc]);
+
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
     return (alerts ?? []).filter((a) => {
